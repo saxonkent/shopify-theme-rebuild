@@ -1,0 +1,41 @@
+{%- liquid
+  assign uniq_id = unique | append: 'product-' | append: product.id | append: '-'
+  assign hide_labels_class = ''
+  assign current_variant = product.selected_or_first_available_variant
+  assign enable_size_chart = enable_size_chart | default: false
+  assign show_size_chart = false
+  assign tags_string = product.tags | join: ','
+  assign size_separator = '_size_'
+  assign specific_pages = ''
+  assign show_size_link_separated = true
+
+  assign size_translation = 'general.size_chart.size' | t
+  assign translation_string_size = size_translation | remove: '  ' | replace: ', ', ',' | replace: ' ,', ',' | replace: ',', '____' | handle | replace: '____', ',' | append: ',' | prepend: ','
+  assign has_size_option = product.options_with_values | where: 'name', size_translation | first
+  if has_size_option
+    assign show_size_link_separated = false
+  endif
+
+  assign has_form_buttons = true
+  assign form_button_blocks = section.blocks | where: 'type', 'buttons'
+  if form_button_blocks.size == 0 and quickview == false
+    assign has_form_buttons = false
+  endif
+
+  assign size_style = block.settings.size_chart_style
+  assign specific_pages = ''
+
+  if block.settings.info_page != blank
+    assign size_translation = 'general.size_chart.size' | t
+    assign info_page = pages[block.settings.info_page]
+  endif
+
+  if tags_string contains size_separator
+    for tag in product.tags
+      if tag contains size_separator
+        assign page_handle = tag | split: size_separator | last | split: ',' | first
+        assign specific_pages = specific_pages | append: page_handle | append: ','
+      endif
+    endfor
+  endif
+-%}
