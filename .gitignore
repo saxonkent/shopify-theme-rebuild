@@ -1,0 +1,5 @@
+node_modules/
+invoice_preview_*.png
+render.mjs
+package-lock.json
+package.json
